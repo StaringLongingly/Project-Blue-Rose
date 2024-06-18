@@ -9,13 +9,6 @@ public class AnimateHandOnInput : MonoBehaviour
     public InputActionProperty gripAnimationAction;
     public Animator handAnimator;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         float triggerValue = pinchAnimationAction.action.ReadValue<float>();
