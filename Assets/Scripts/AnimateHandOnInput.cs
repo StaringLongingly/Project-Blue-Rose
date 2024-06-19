@@ -16,5 +16,7 @@ public class AnimateHandOnInput : MonoBehaviour
 
         float gripValue = gripAnimationAction.action.ReadValue<float>();
         handAnimator.SetFloat("Grip", gripValue);
+
+        gameObject.GetComponentInParent<ForceGrabObject>().isGrabbing = gripValue > 0.5f;
     }
 }

@@ -46,7 +46,7 @@ public class UpdateHandModelTransform : MonoBehaviour
         {
             Vector3 direction = difference.normalized;
             Vector3 newVelocity = direction * magnitude * ForceScalar;
-            Debug.Log(newVelocity);
+            //Debug.Log(newVelocity);
             rb.velocity = newVelocity / rb.mass; 
         }
     }
