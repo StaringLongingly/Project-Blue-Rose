@@ -187,6 +187,89 @@ MonoBehaviour:
   m_CameraFloorOffsetObject: {fileID: 770467954}
   m_RequestedTrackingOriginMode: 2
   m_CameraYOffset: 1.1176
+--- !u!1 &199212355
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 199212358}
+  - component: {fileID: 199212357}
+  - component: {fileID: 199212356}
+  m_Layer: 0
+  m_Name: Dummy Left Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &199212356
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199212355}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &199212357
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199212355}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &199212358
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199212355}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &436415992
 GameObject:
   m_ObjectHideFlags: 0
@@ -705,10 +788,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3146361099d1d4b40a0411f45e14507e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  otherHandScript: {fileID: 2058056496}
+  dummyController: {fileID: 199212355}
+  head: {fileID: 780401847}
+  headAverageWeight: 20
+  headRotationAroundY: 0
   GrabObjectTransformBeforeGrab: {fileID: 0}
-  handTransformBeforeGrab: {fileID: 0}
   grabObject: {fileID: 0}
+  handTransformBeforeGrab: {fileID: 0}
   isGrabbing: 0
+  handOriginalMass: 0
+  forceScalar: 10
+  maxGrabDistance: 100
+  grabDeltaRadius: 0.5
+  offsetPower: {x: 1.1, y: 1.1, z: 4}
+  offsetScalarsBeforeExp: {x: 1, y: 1, z: 3}
+  offsetScalarsAfterExp: {x: 1, y: 1, z: 1}
+  minimumForwardDistance: 0.5
+  handPositionBeforeGrab: {x: 0, y: 0, z: 0}
+  handPositionDifference: {x: 0, y: 0, z: 0}
+  handPositionDifferenceComponents: {x: 0, y: 0, z: 0}
+  handPositionDifferenceComponentsTransformed: {x: 0, y: 0, z: 0}
+  handOffsetPosition: {x: 0, y: 0, z: 0}
+  rotatedObjectPosition: {x: 0, y: 0, z: 0}
+  finalObjectPosition: {x: 0, y: 0, z: 0}
   positionDifferenceMagnitude: 0
 --- !u!1 &770467954
 GameObject:
@@ -760,7 +863,7 @@ GameObject:
   - component: {fileID: 780401849}
   - component: {fileID: 780401852}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Head
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1132,6 +1235,89 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1601935476}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1010221959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1010221962}
+  - component: {fileID: 1010221961}
+  - component: {fileID: 1010221960}
+  m_Layer: 0
+  m_Name: Dummy Right Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &1010221960
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010221959}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1010221961
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010221959}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1010221962
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010221959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1039273851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1566,6 +1752,7 @@ GameObject:
   - component: {fileID: 1493131580}
   - component: {fileID: 1493131579}
   - component: {fileID: 1493131578}
+  - component: {fileID: 1493131582}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -1660,6 +1847,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1493131582
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493131577}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!1001 &1601935476
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1783,6 +1997,7 @@ MonoBehaviour:
     m_Reference: {fileID: 6558622148059887818, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
   handAnimator: {fileID: 1601935478}
+  grabOverride: 0
 --- !u!1 &1685742601
 GameObject:
   m_ObjectHideFlags: 0
@@ -1866,6 +2081,7 @@ MonoBehaviour:
     m_Reference: {fileID: -1758520528963094988, guid: c348712bda248c246b8c49b3db54643f,
       type: 3}
   handAnimator: {fileID: 1996062064}
+  grabOverride: 0
 --- !u!1 &2058056492
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,10 +2172,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3146361099d1d4b40a0411f45e14507e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  otherHandScript: {fileID: 622950706}
+  dummyController: {fileID: 1010221959}
+  head: {fileID: 780401847}
+  headAverageWeight: 3
+  headRotationAroundY: 0
   GrabObjectTransformBeforeGrab: {fileID: 0}
-  handTransformBeforeGrab: {fileID: 0}
   grabObject: {fileID: 0}
+  handTransformBeforeGrab: {fileID: 0}
   isGrabbing: 0
+  handOriginalMass: 0
+  forceScalar: 10
+  maxGrabDistance: 100
+  grabDeltaRadius: 0.5
+  offsetPower: {x: 1.1, y: 1.1, z: 4}
+  offsetScalarsBeforeExp: {x: 1, y: 1, z: 2}
+  offsetScalarsAfterExp: {x: 1, y: 1, z: 1}
+  minimumForwardDistance: 0.5
+  handPositionBeforeGrab: {x: 0, y: 0, z: 0}
+  handPositionDifference: {x: 0, y: 0, z: 0}
+  handPositionDifferenceComponents: {x: 0, y: 0, z: 0}
+  handPositionDifferenceComponentsTransformed: {x: 0, y: 0, z: 0}
+  handOffsetPosition: {x: 0, y: 0, z: 0}
+  rotatedObjectPosition: {x: 0, y: 0, z: 0}
+  finalObjectPosition: {x: 0, y: 0, z: 0}
   positionDifferenceMagnitude: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -1970,3 +2206,5 @@ SceneRoots:
   - {fileID: 1685742602}
   - {fileID: 436415994}
   - {fileID: 859946569}
+  - {fileID: 199212358}
+  - {fileID: 1010221962}

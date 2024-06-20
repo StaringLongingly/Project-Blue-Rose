@@ -8,6 +8,7 @@ public class AnimateHandOnInput : MonoBehaviour
     public InputActionProperty pinchAnimationAction;
     public InputActionProperty gripAnimationAction;
     public Animator handAnimator;
+    public bool grabOverride;
 
     void Update()
     {
@@ -17,6 +18,6 @@ public class AnimateHandOnInput : MonoBehaviour
         float gripValue = gripAnimationAction.action.ReadValue<float>();
         handAnimator.SetFloat("Grip", gripValue);
 
-        gameObject.GetComponentInParent<ForceGrabObject>().isGrabbing = gripValue > 0.5f;
+        gameObject.GetComponentInParent<ForceGrabObject>().isGrabbing = gripValue > 0.5f || grabOverride;
     }
 }

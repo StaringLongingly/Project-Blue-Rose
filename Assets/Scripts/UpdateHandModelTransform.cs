@@ -22,7 +22,7 @@ public class UpdateHandModelTransform : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (rb != null)
         {
