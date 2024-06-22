@@ -17,6 +17,7 @@ public class ForceGrabObject : MonoBehaviour
     public Transform GrabObjectTransformBeforeGrab;
     public GameObject grabObject;
     private Rigidbody grabObjectRigidBody;
+    private bool grabObjectRigidBodyGravityBeforeGrab; 
     public float finalObjectPositionDistanceFromHand;
 
     [Header("Hand Information")]
@@ -48,10 +49,6 @@ public class ForceGrabObject : MonoBehaviour
 
     public Vector3 rotatedObjectPosition;
     public Vector3 finalObjectPosition;
-    public float grabObjectDistanceToHead;
-    public Vector3 finalObjectPositionDeconstructed;
-    public Vector3 finalObjectPositionDeconstructedCorrection;
-    public float finalObjectPositionProjectedToHead; 
     public float positionDifferenceMagnitude;
 
 
@@ -69,7 +66,7 @@ public class ForceGrabObject : MonoBehaviour
         {
             bool foundGrabObject = false;
             RaycastHit hitInfo = new RaycastHit();
-            for (float i = 1; i <= maxGrabDistance && (!foundGrabObject || foundGrabObject && grabObject == otherHandScript.grabObject); i++)
+            for (float i = 1; i <= maxGrabDistance && !foundGrabObject; i++)
             {
                 foundGrabObject = Physics.SphereCast
                 (
@@ -78,7 +75,7 @@ public class ForceGrabObject : MonoBehaviour
                     transform.forward * maxGrabDistance,
                     out hitInfo,
                     LayerMask.GetMask("Grabbable")
-                );
+                ) && hitInfo.collider.gameObject != otherHandScript.grabObject;
 
                 if (foundGrabObject) grabObject = hitInfo.collider.gameObject;
             }
@@ -87,6 +84,7 @@ public class ForceGrabObject : MonoBehaviour
             {
                 Debug.Log("Object Force Grabbed!");
                 grabObjectRigidBody = grabObject.GetComponent<Rigidbody>();
+                grabObjectRigidBodyGravityBeforeGrab = grabObjectRigidBody.useGravity;
                 grabObjectRigidBody.useGravity = false;
 
                 GrabObjectTransformBeforeGrab = grabObject.transform;
@@ -108,7 +106,7 @@ public class ForceGrabObject : MonoBehaviour
         if (!isGrabbing && grabObject != null && grabObjectRigidBody != null)
         {
             Debug.Log("Object Force Dropped!", grabObject);
-            grabObjectRigidBody.useGravity = true;
+            grabObjectRigidBody.useGravity = grabObjectRigidBodyGravityBeforeGrab;
             grabObject = null;
             grabObjectRigidBody = null;
 
