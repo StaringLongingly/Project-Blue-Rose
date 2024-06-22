@@ -5,6 +5,8 @@ public class ForceGrabObject : MonoBehaviour
     public ForceGrabObject otherHandScript;
     public GameObject dummyController;
     public float massScalar = 2f;
+    public float angularVelocityWhenNear = 1f;
+    public float rotationThreshold = 0.2f;
 
     [Header("Limiters, X is Minimum, Y is Maximum")] 
     public Vector2 limitYPosition;
@@ -34,6 +36,7 @@ public class ForceGrabObject : MonoBehaviour
     public float forceScalar = 10f;
     public float maxGrabDistance = 100f;
     public float grabDeltaRadius = 0.5f;
+    public float maxGrabRadius = 10f;
 
     [Header("Offset Parameters (X is Right, Y is Up, Z is Forward)")]
     public Vector3 offsetPower = new Vector3(1.1f, 1.1f, 1.1f);
@@ -41,6 +44,7 @@ public class ForceGrabObject : MonoBehaviour
     public Vector3 offsetScalarsAfterExp = new Vector3(1f, 1f, 1f);
 
     [Header("Position Vectors")]
+    public Vector3 randomRotationDirection;
     public Vector3 headPositionBeforeGrab;
     public Vector3 handPositionBeforeGrab;
     public Vector3 handPositionComponents;
@@ -66,19 +70,25 @@ public class ForceGrabObject : MonoBehaviour
         {
             bool foundGrabObject = false;
             RaycastHit hitInfo = new RaycastHit();
-            for (float i = 1; i <= maxGrabDistance && !foundGrabObject; i++)
+            //for (float i = 1; i <= maxGrabDistance && !foundGrabObject; i++)
+            //Inner Loop for back-to-back Spheres, outer Loop for Bigger Radii
+            for (float currentRadius = 1; currentRadius <= maxGrabRadius && !foundGrabObject; currentRadius += grabDeltaRadius)
             {
-                foundGrabObject = Physics.SphereCast
-                (
-                    transform.position + transform.forward * (i - 3),
-                    i * grabDeltaRadius,
-                    transform.forward * maxGrabDistance,
-                    out hitInfo,
-                    LayerMask.GetMask("Grabbable")
-                ) && hitInfo.collider.gameObject != otherHandScript.grabObject;
+                for (float j = 1; j <= maxGrabDistance && !foundGrabObject; j += grabDeltaRadius)
+                {
+                    foundGrabObject = Physics.SphereCast
+                    (
+                        transform.forward * j,
+                        currentRadius,
+                        transform.forward,
+                        out hitInfo,
+                        LayerMask.GetMask("Grabbable")
+                    ) && hitInfo.collider.gameObject != otherHandScript.grabObject;
 
-                if (foundGrabObject) grabObject = hitInfo.collider.gameObject;
-            }
+                    if (foundGrabObject)
+                        grabObject = hitInfo.collider.gameObject;
+                }
+           }
 
             if (foundGrabObject)
             {
@@ -96,6 +106,8 @@ public class ForceGrabObject : MonoBehaviour
                 handRigidBody.mass = grabObjectRigidBody.mass / massScalar;
 
                 positionDifferenceMagnitude = (GrabObjectTransformBeforeGrab.position - transform.position).magnitude;
+
+                randomRotationDirection = Random.insideUnitSphere.normalized; 
             }
         }
 
@@ -114,6 +126,7 @@ public class ForceGrabObject : MonoBehaviour
         }
         else if (grabObject != null && grabObjectRigidBody != null)
         {
+
             //Calculate Magnitude Difference
             Vector3 ProjectToUpPlane(Vector3 vector) { return vector - Vector3.Dot(vector, Vector3.up) * Vector3.up; }
             handDistanceFromHeadBeforeGrab = (ProjectToUpPlane(handPositionBeforeGrab) - ProjectToUpPlane(headPositionBeforeGrab)).magnitude;
@@ -145,7 +158,11 @@ public class ForceGrabObject : MonoBehaviour
             if (finalObjectPosition.y > limitYPosition.y) finalObjectPosition.y = limitYPosition.y;
 
             //Limit Magnitude
-            if (finalObjectPosition.magnitude > limitMagnitude.y) finalObjectPosition = finalObjectPosition.normalized * limitMagnitude.y;
+            if (finalObjectPosition.magnitude > limitMagnitude.y)
+                finalObjectPosition = finalObjectPosition.normalized * limitMagnitude.y;
+
+            if (finalObjectPosition.magnitude > limitMagnitude.y + rotationThreshold)
+                grabObjectRigidBody.angularVelocity = randomRotationDirection * angularVelocityWhenNear;
 
             Vector3 newVelocity = (finalObjectPosition - grabObject.transform.position) * forceScalar;
 

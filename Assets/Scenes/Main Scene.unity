@@ -204,7 +204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &199212356
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -758,7 +758,7 @@ Rigidbody:
   m_GameObject: {fileID: 622950702}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 5
+  m_Drag: 3
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -791,6 +791,7 @@ MonoBehaviour:
   otherHandScript: {fileID: 2058056496}
   dummyController: {fileID: 199212355}
   massScalar: 2
+  angularVelocityWhenNear: 1
   limitYPosition: {x: 0, y: 30}
   limitMagnitude: {x: 0.6, y: 30}
   head: {fileID: 780401847}
@@ -807,9 +808,10 @@ MonoBehaviour:
   forceScalar: 10
   maxGrabDistance: 100
   grabDeltaRadius: 0.5
-  offsetPower: {x: 1.1, y: 1.1, z: 4}
-  offsetScalarsBeforeExp: {x: 1, y: 1, z: 100}
-  offsetScalarsAfterExp: {x: 1, y: 1, z: 0.001}
+  offsetPower: {x: 1.1, y: 1.1, z: 3}
+  offsetScalarsBeforeExp: {x: 1, y: 1, z: 45}
+  offsetScalarsAfterExp: {x: 1, y: 1, z: 0.02}
+  randomRotationDirection: {x: 0, y: 0, z: 0}
   headPositionBeforeGrab: {x: 0, y: 0, z: 0}
   handPositionBeforeGrab: {x: 0, y: 0, z: 0}
   handPositionComponents: {x: 0, y: 0, z: 0}
@@ -1114,8 +1116,8 @@ GameObject:
   - component: {fileID: 859946567}
   - component: {fileID: 859946566}
   - component: {fileID: 859946570}
-  - component: {fileID: 859946572}
   - component: {fileID: 859946573}
+  - component: {fileID: 859946572}
   m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
@@ -1203,7 +1205,7 @@ Transform:
   m_GameObject: {fileID: 859946565}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 12.44, z: 5}
+  m_LocalPosition: {x: 0, y: 5, z: 5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1217,8 +1219,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 859946565}
   serializedVersion: 4
-  m_Mass: 5
-  m_Drag: 0
+  m_Mass: 2
+  m_Drag: 3
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -1292,7 +1294,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1349,6 +1351,7 @@ MonoBehaviour:
   maxVelocity: 20
   pitchScalar: 2
   volumeScalar: 2
+  volumePowerScalar: 0.7
 --- !u!96 &859946573
 TrailRenderer:
   serializedVersion: 3
@@ -1357,7 +1360,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 859946565}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1485,7 +1488,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1010221960
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2346,7 +2349,7 @@ Rigidbody:
   m_GameObject: {fileID: 2058056492}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 5
+  m_Drag: 3
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -2379,6 +2382,7 @@ MonoBehaviour:
   otherHandScript: {fileID: 622950706}
   dummyController: {fileID: 1010221959}
   massScalar: 2
+  angularVelocityWhenNear: 1
   limitYPosition: {x: 0, y: 30}
   limitMagnitude: {x: 0.6, y: 30}
   head: {fileID: 780401847}
@@ -2395,9 +2399,10 @@ MonoBehaviour:
   forceScalar: 10
   maxGrabDistance: 100
   grabDeltaRadius: 0.5
-  offsetPower: {x: 1.1, y: 1.1, z: 4}
-  offsetScalarsBeforeExp: {x: 1, y: 1, z: 100}
-  offsetScalarsAfterExp: {x: 1, y: 1, z: 0.001}
+  offsetPower: {x: 1.1, y: 1.1, z: 3}
+  offsetScalarsBeforeExp: {x: 1, y: 1, z: 45}
+  offsetScalarsAfterExp: {x: 1, y: 1, z: 0.02}
+  randomRotationDirection: {x: 0, y: 0, z: 0}
   headPositionBeforeGrab: {x: 0, y: 0, z: 0}
   handPositionBeforeGrab: {x: 0, y: 0, z: 0}
   handPositionComponents: {x: 0, y: 0, z: 0}

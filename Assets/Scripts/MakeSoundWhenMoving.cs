@@ -11,6 +11,7 @@ public class MakeSoundWhenMoving : MonoBehaviour
     public float maxVelocity = 20f;
     public float pitchScalar;
     public float volumeScalar;
+    public float volumePowerScalar;
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +31,7 @@ public class MakeSoundWhenMoving : MonoBehaviour
         if (velocity > maxVelocity) velocity = maxVelocity;
 
         float velocityScaledForPitch = Mathf.Clamp(velocity * pitchScalar, 0, maxVelocity);
-        float velocityScaledForVolume = Mathf.Clamp(velocity * volumeScalar, 0, maxVelocity);
+        float velocityScaledForVolume = Mathf.Clamp(Mathf.Pow(velocity, volumePowerScalar) * volumeScalar, 0, maxVelocity);
 
         audioSource.pitch = Remap(velocityScaledForPitch, 0f, maxVelocity, 1f, 3f);
         audioSource.volume = Remap(velocityScaledForVolume, 0f, maxVelocity, 0f, 1f); 
