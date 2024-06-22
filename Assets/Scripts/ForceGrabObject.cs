@@ -1,26 +1,33 @@
 using UnityEngine;
-using System;
 
 public class ForceGrabObject : MonoBehaviour
 {
     public ForceGrabObject otherHandScript;
     public GameObject dummyController;
+    public float massScalar = 2f;
+
+    [Header("Limiters, X is Minimum, Y is Maximum")] 
+    public Vector2 limitYPosition;
+    public Vector2 limitMagnitude; 
 
     [Header("Head Information")]
     public GameObject head;
-    public float headAverageWeight = 3;
-    public float headRotationAroundY;
 
     [Header("Grabbed Object Information")]
     public Transform GrabObjectTransformBeforeGrab;
     public GameObject grabObject;
     private Rigidbody grabObjectRigidBody;
+    public float finalObjectPositionDistanceFromHand;
 
     [Header("Hand Information")]
     public Transform handTransformBeforeGrab;
     public bool isGrabbing = false; 
     private Rigidbody handRigidBody;
     public float handOriginalMass;
+    public float handDistanceFromHeadBeforeGrab;
+    public float handDistanceFromHead;
+    public float handDistanceFromHeadDifference;
+    public float handDistanceFromHeadDifferenceTransformed;
     
     [Header("Grab Area Scalars")]
     public float forceScalar = 10f;
@@ -31,17 +38,20 @@ public class ForceGrabObject : MonoBehaviour
     public Vector3 offsetPower = new Vector3(1.1f, 1.1f, 1.1f);
     public Vector3 offsetScalarsBeforeExp = new Vector3(2f, 2f, 2f);
     public Vector3 offsetScalarsAfterExp = new Vector3(1f, 1f, 1f);
-    public float minimumForwardDistance = 0.5f;
 
     [Header("Position Vectors")]
+    public Vector3 headPositionBeforeGrab;
     public Vector3 handPositionBeforeGrab;
-    public Vector3 handPositionDifference;
-    public Vector3 handPositionDifferenceComponents;
-    public Vector3 handPositionDifferenceComponentsTransformed;
-    public Vector3 handOffsetPosition;
+    public Vector3 handPositionComponents;
+
+    public Vector3 newHandPosition;
+
     public Vector3 rotatedObjectPosition;
     public Vector3 finalObjectPosition;
-
+    public float grabObjectDistanceToHead;
+    public Vector3 finalObjectPositionDeconstructed;
+    public Vector3 finalObjectPositionDeconstructedCorrection;
+    public float finalObjectPositionProjectedToHead; 
     public float positionDifferenceMagnitude;
 
 
@@ -81,9 +91,11 @@ public class ForceGrabObject : MonoBehaviour
 
                 GrabObjectTransformBeforeGrab = grabObject.transform;
 
+                headPositionBeforeGrab =  head.transform.position;
+
                 handTransformBeforeGrab = transform;
                 handPositionBeforeGrab = handTransformBeforeGrab.position; 
-                handRigidBody.mass = grabObjectRigidBody.mass;
+                handRigidBody.mass = grabObjectRigidBody.mass / massScalar;
 
                 positionDifferenceMagnitude = (GrabObjectTransformBeforeGrab.position - transform.position).magnitude;
             }
@@ -104,41 +116,38 @@ public class ForceGrabObject : MonoBehaviour
         }
         else if (grabObject != null && grabObjectRigidBody != null)
         {
-            //Vector3 headTransformForwardProjected = head.transform.forward - Vector3.Dot(head.transform.forward, Vector3.up) * Vector3.up;
-            Vector3 ProjectNormalizedToUpPlane(Vector3 vector) { return vector.normalized - Vector3.Dot(vector.normalized, Vector3.up) * Vector3.up; }
-            Vector3 averagePositionsProjected =
-                ProjectNormalizedToUpPlane(transform.position - head.transform.position) +
-                ProjectNormalizedToUpPlane(head.transform.forward) * headAverageWeight +
-                ProjectNormalizedToUpPlane(otherHandScript.gameObject.transform.position - head.transform.position);
-
-            headRotationAroundY = Vector3.SignedAngle(Vector3.forward, averagePositionsProjected, Vector3.up); 
-            Vector3 handPositionBeforeGrabTransformed = new Vector3(head.transform.position.x, 0, head.transform.position.z) + Quaternion.AngleAxis(headRotationAroundY, Vector3.up) * handPositionBeforeGrab;
-            dummyController.transform.position = handPositionBeforeGrabTransformed;
-            handPositionDifference = transform.position - handPositionBeforeGrabTransformed; 
+            //Calculate Magnitude Difference
+            Vector3 ProjectToUpPlane(Vector3 vector) { return vector - Vector3.Dot(vector, Vector3.up) * Vector3.up; }
+            handDistanceFromHeadBeforeGrab = (ProjectToUpPlane(handPositionBeforeGrab) - ProjectToUpPlane(headPositionBeforeGrab)).magnitude;
+            handDistanceFromHead = (ProjectToUpPlane(transform.position) - ProjectToUpPlane(head.transform.position)).magnitude;
+            handDistanceFromHeadDifference = handDistanceFromHead - handDistanceFromHeadBeforeGrab;
 
             //Break down the Vector3 into Components
-            handPositionDifferenceComponents.x = Vector3.Dot(handPositionDifference, transform.right);
-            handPositionDifferenceComponents.y = Vector3.Dot(handPositionDifference, transform.up);
-            handPositionDifferenceComponents.z = Vector3.Dot(handPositionDifference, transform.forward);
+            handPositionComponents.x = Vector3.Dot(transform.position, transform.right);
+            handPositionComponents.y = Vector3.Dot(transform.position, transform.up);
+            handPositionComponents.z = Vector3.Dot(transform.position, transform.forward);
 
             //Apply Transformations
-            float raiseToPowerAndScaleWithoutLosingSign(float number, float power, float scalar1, float scalar2) { return Mathf.Sign(number) * Mathf.Pow(Mathf.Abs(number * scalar1), power) / scalar2; }
-            handPositionDifferenceComponentsTransformed.x = raiseToPowerAndScaleWithoutLosingSign(handPositionDifferenceComponents.x, offsetPower.x, offsetScalarsBeforeExp.x, offsetScalarsAfterExp.x); 
-            handPositionDifferenceComponentsTransformed.y = raiseToPowerAndScaleWithoutLosingSign(handPositionDifferenceComponents.y, offsetPower.y, offsetScalarsBeforeExp.y, offsetScalarsAfterExp.y); 
-            handPositionDifferenceComponentsTransformed.z = raiseToPowerAndScaleWithoutLosingSign(handPositionDifferenceComponents.z, offsetPower.z, offsetScalarsBeforeExp.z, offsetScalarsAfterExp.z); 
-
-            if (handPositionDifferenceComponentsTransformed.z < minimumForwardDistance) handPositionBeforeGrabTransformed.z = minimumForwardDistance;
+            handDistanceFromHeadDifferenceTransformed = Mathf.Sign(handDistanceFromHeadDifference) * Mathf.Pow(Mathf.Abs(handDistanceFromHeadDifference * offsetScalarsBeforeExp.z), offsetPower.z) * offsetScalarsAfterExp.z;
+            //Limit the Distance
+            finalObjectPositionDistanceFromHand = handDistanceFromHeadDifferenceTransformed + positionDifferenceMagnitude;
+            if (finalObjectPositionDistanceFromHand < limitMagnitude.x) handDistanceFromHeadDifferenceTransformed = limitMagnitude.x - positionDifferenceMagnitude; 
 
             //Reconstruct the Vector3
-            handOffsetPosition =
-                handPositionDifferenceComponentsTransformed.x * transform.right +
-                handPositionDifferenceComponentsTransformed.y * transform.up +
-                handPositionDifferenceComponentsTransformed.z * transform.forward;
+            newHandPosition =
+                handPositionComponents.x * transform.right +
+                handPositionComponents.y * transform.up +
+                (handPositionComponents.z + handDistanceFromHeadDifferenceTransformed) * transform.forward;
 
-            rotatedObjectPosition = transform.position + transform.forward * positionDifferenceMagnitude;
-            finalObjectPosition = rotatedObjectPosition 
-            //handOffsetPosition
-            ; 
+            rotatedObjectPosition = transform.forward * positionDifferenceMagnitude;
+            finalObjectPosition = rotatedObjectPosition + newHandPosition;
+
+            //Limit Y Position
+            if (finalObjectPosition.y < limitYPosition.x) finalObjectPosition.y = limitYPosition.x;
+            if (finalObjectPosition.y > limitYPosition.y) finalObjectPosition.y = limitYPosition.y;
+
+            //Limit Magnitude
+            if (finalObjectPosition.magnitude > limitMagnitude.y) finalObjectPosition = finalObjectPosition.normalized * limitMagnitude.y;
 
             Vector3 newVelocity = (finalObjectPosition - grabObject.transform.position) * forceScalar;
 

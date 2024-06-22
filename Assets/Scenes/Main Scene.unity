@@ -790,28 +790,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   otherHandScript: {fileID: 2058056496}
   dummyController: {fileID: 199212355}
+  massScalar: 2
+  limitYPosition: {x: 0, y: 30}
+  limitMagnitude: {x: 0.3, y: 30}
   head: {fileID: 780401847}
-  headAverageWeight: 20
-  headRotationAroundY: 0
   GrabObjectTransformBeforeGrab: {fileID: 0}
   grabObject: {fileID: 0}
+  finalObjectPositionDistanceFromHand: 0
   handTransformBeforeGrab: {fileID: 0}
   isGrabbing: 0
   handOriginalMass: 0
+  handDistanceFromHeadBeforeGrab: 0
+  handDistanceFromHead: 0
+  handDistanceFromHeadDifference: 0
+  handDistanceFromHeadDifferenceTransformed: 0
   forceScalar: 10
   maxGrabDistance: 100
   grabDeltaRadius: 0.5
   offsetPower: {x: 1.1, y: 1.1, z: 4}
-  offsetScalarsBeforeExp: {x: 1, y: 1, z: 3}
-  offsetScalarsAfterExp: {x: 1, y: 1, z: 1}
-  minimumForwardDistance: 0.5
+  offsetScalarsBeforeExp: {x: 1, y: 1, z: 100}
+  offsetScalarsAfterExp: {x: 1, y: 1, z: 0.001}
+  headPositionBeforeGrab: {x: 0, y: 0, z: 0}
   handPositionBeforeGrab: {x: 0, y: 0, z: 0}
-  handPositionDifference: {x: 0, y: 0, z: 0}
-  handPositionDifferenceComponents: {x: 0, y: 0, z: 0}
-  handPositionDifferenceComponentsTransformed: {x: 0, y: 0, z: 0}
-  handOffsetPosition: {x: 0, y: 0, z: 0}
+  handPositionComponents: {x: 0, y: 0, z: 0}
+  newHandPosition: {x: 0, y: 0, z: 0}
   rotatedObjectPosition: {x: 0, y: 0, z: 0}
   finalObjectPosition: {x: 0, y: 0, z: 0}
+  grabObjectDistanceToHead: 0
+  finalObjectPositionDeconstructed: {x: 0, y: 0, z: 0}
+  finalObjectPositionDeconstructedCorrection: {x: 0, y: 0, z: 0}
+  finalObjectPositionProjectedToHead: 0
   positionDifferenceMagnitude: 0
 --- !u!1 &770467954
 GameObject:
@@ -1011,7 +1019,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1109,6 +1117,7 @@ GameObject:
   - component: {fileID: 859946567}
   - component: {fileID: 859946566}
   - component: {fileID: 859946570}
+  - component: {fileID: 859946571}
   m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
@@ -1196,7 +1205,7 @@ Transform:
   m_GameObject: {fileID: 859946565}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 20, z: 5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1210,7 +1219,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 859946565}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1226,9 +1235,24 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
+--- !u!114 &859946571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 859946565}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da4c8ea5a4e4504f95b59056db89a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newPosition: {x: 0, y: 0, z: 0}
+  minimumY: 0.4
+  maximumMagnitude: 20
 --- !u!1 &988481102 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 109434732395284509, guid: 65847589f926b734d9eaed6e25f0046b,
@@ -1751,8 +1775,8 @@ GameObject:
   - component: {fileID: 1493131581}
   - component: {fileID: 1493131580}
   - component: {fileID: 1493131579}
-  - component: {fileID: 1493131578}
   - component: {fileID: 1493131582}
+  - component: {fileID: 1493131583}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -1760,28 +1784,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &1493131578
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1493131577}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1493131579
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1802,7 +1804,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e875b01292f8e5e41bd9d41d575bffaf, type: 2}
+  - {fileID: 2100000, guid: 6cb74a06e210e0f4b83befcf413728de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1842,8 +1844,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 10}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.05, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1873,7 +1875,28 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
+--- !u!65 &1493131583
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493131577}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 10, y: 1, z: 10}
+  m_Center: {x: 0, y: -0.5, z: 0}
 --- !u!1001 &1601935476
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2157,7 +2180,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &2058056496
@@ -2174,28 +2197,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   otherHandScript: {fileID: 622950706}
   dummyController: {fileID: 1010221959}
+  massScalar: 2
+  limitYPosition: {x: 0, y: 0}
+  limitMagnitude: {x: 0, y: 0}
   head: {fileID: 780401847}
-  headAverageWeight: 3
-  headRotationAroundY: 0
   GrabObjectTransformBeforeGrab: {fileID: 0}
   grabObject: {fileID: 0}
+  finalObjectPositionDistanceFromHand: 0
   handTransformBeforeGrab: {fileID: 0}
   isGrabbing: 0
   handOriginalMass: 0
+  handDistanceFromHeadBeforeGrab: 0
+  handDistanceFromHead: 0
+  handDistanceFromHeadDifference: 0
+  handDistanceFromHeadDifferenceTransformed: 0
   forceScalar: 10
   maxGrabDistance: 100
   grabDeltaRadius: 0.5
   offsetPower: {x: 1.1, y: 1.1, z: 4}
   offsetScalarsBeforeExp: {x: 1, y: 1, z: 2}
   offsetScalarsAfterExp: {x: 1, y: 1, z: 1}
-  minimumForwardDistance: 0.5
+  headPositionBeforeGrab: {x: 0, y: 0, z: 0}
   handPositionBeforeGrab: {x: 0, y: 0, z: 0}
-  handPositionDifference: {x: 0, y: 0, z: 0}
-  handPositionDifferenceComponents: {x: 0, y: 0, z: 0}
-  handPositionDifferenceComponentsTransformed: {x: 0, y: 0, z: 0}
-  handOffsetPosition: {x: 0, y: 0, z: 0}
+  handPositionComponents: {x: 0, y: 0, z: 0}
+  newHandPosition: {x: 0, y: 0, z: 0}
   rotatedObjectPosition: {x: 0, y: 0, z: 0}
   finalObjectPosition: {x: 0, y: 0, z: 0}
+  grabObjectDistanceToHead: 0
+  finalObjectPositionDeconstructed: {x: 0, y: 0, z: 0}
+  finalObjectPositionDeconstructedCorrection: {x: 0, y: 0, z: 0}
+  finalObjectPositionProjectedToHead: 0
   positionDifferenceMagnitude: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
