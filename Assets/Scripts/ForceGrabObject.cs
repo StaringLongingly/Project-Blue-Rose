@@ -1,9 +1,13 @@
+using UnityEditor;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class ForceGrabObject : MonoBehaviour
 {
     public ForceGrabObject otherHandScript;
     public GameObject dummyController;
+    public GameObject previousHighlightedGrabObject;
+    public bool foundGrabObject; 
     public float massScalar = 2f;
     public float angularVelocityWhenNear = 1f;
     public float rotationThreshold = 0.2f;
@@ -24,6 +28,7 @@ public class ForceGrabObject : MonoBehaviour
 
     [Header("Hand Information")]
     public Transform handTransformBeforeGrab;
+    public bool isLeftHand;
     public bool isGrabbing = false; 
     private Rigidbody handRigidBody;
     public float handOriginalMass;
@@ -65,32 +70,69 @@ public class ForceGrabObject : MonoBehaviour
     void FixedUpdate()
     {
         Debug.DrawRay(transform.position, transform.forward * maxGrabDistance, Color.red);
-            //Debug.Log("Raycast Hit!");
-        if (grabObject == null && isGrabbing)
+        if (grabObject == null)
         {
             bool foundGrabObject = false;
             RaycastHit hitInfo = new RaycastHit();
-            //for (float i = 1; i <= maxGrabDistance && !foundGrabObject; i++)
-            //Inner Loop for back-to-back Spheres, outer Loop for Bigger Radii
-            for (float currentRadius = 1; currentRadius <= maxGrabRadius && !foundGrabObject; currentRadius += grabDeltaRadius)
+            int grabbableLayerMask = LayerMask.GetMask("Grabbable");
+
+            // Inner Loop for back-to-back Spheres, outer Loop for Bigger Radii
+            for (float currentRadius = 1; currentRadius <= maxGrabRadius; currentRadius += grabDeltaRadius)
             {
-                for (float j = 1; j <= maxGrabDistance && !foundGrabObject; j += grabDeltaRadius)
+                for (float j = 1; j <= maxGrabDistance; j += grabDeltaRadius)
                 {
-                    foundGrabObject = Physics.SphereCast
-                    (
-                        transform.forward * j,
+                    Vector3 origin = transform.position + transform.forward * j;
+                    foundGrabObject = Physics.SphereCast(
+                        origin,
                         currentRadius,
                         transform.forward,
                         out hitInfo,
-                        LayerMask.GetMask("Grabbable")
-                    ) && hitInfo.collider.gameObject != otherHandScript.grabObject;
+                        maxGrabDistance,
+                        grabbableLayerMask
+                    ) && hitInfo.collider.gameObject != otherHandScript.grabObject && hitInfo.collider.gameObject.layer == 3;
 
                     if (foundGrabObject)
-                        grabObject = hitInfo.collider.gameObject;
+                    {
+                        break;
+                    }
                 }
-           }
+
+                if (foundGrabObject)
+                {
+                    break;
+                }
+            }
 
             if (foundGrabObject)
+            {
+                Debug.Log("Found Grabbable Object");
+
+                if (!isGrabbing)
+                {
+                    Debug.Log("Object Highlighted");
+                    HighlightGameObject highlightScript = hitInfo.collider.gameObject.GetComponent<HighlightGameObject>();
+                    if (isLeftHand) highlightScript.isHighlightedFromLeftHand = true;
+                    else highlightScript.isHighlightedFromRightHand = true; 
+
+                    if (hitInfo.collider.gameObject != previousHighlightedGrabObject)
+                    {
+                        previousHighlightedGrabObject = hitInfo.collider.gameObject;
+                    }
+                }
+                else
+                {
+                    grabObject = hitInfo.collider.gameObject;
+                }
+            }
+            else if (previousHighlightedGrabObject != null)
+            {
+                Debug.Log("Object Dehighlighted");
+                HighlightGameObject highlightScript = previousHighlightedGrabObject.GetComponent<HighlightGameObject>();
+                if (isLeftHand) highlightScript.isHighlightedFromLeftHand = false;
+                else highlightScript.isHighlightedFromRightHand = false; 
+            }
+
+            if (foundGrabObject && isGrabbing)
             {
                 Debug.Log("Object Force Grabbed!");
                 grabObjectRigidBody = grabObject.GetComponent<Rigidbody>();
@@ -111,8 +153,6 @@ public class ForceGrabObject : MonoBehaviour
             }
         }
 
-        //Hacky Solution, will use this until I find a proper way to prevent non Grabbable objects to be grabbed
-        if (grabObject != null && grabObject.layer != 3) grabObject = null;
         
         //Debug.Log("Raycast Collided");
         if (!isGrabbing && grabObject != null && grabObjectRigidBody != null)
@@ -150,6 +190,7 @@ public class ForceGrabObject : MonoBehaviour
                 handPositionComponents.y * transform.up +
                 (handPositionComponents.z + handDistanceFromHeadDifferenceTransformed) * transform.forward;
 
+            //Calculate Rotations
             rotatedObjectPosition = transform.forward * positionDifferenceMagnitude;
             finalObjectPosition = rotatedObjectPosition + newHandPosition;
 
@@ -161,6 +202,7 @@ public class ForceGrabObject : MonoBehaviour
             if (finalObjectPosition.magnitude > limitMagnitude.y)
                 finalObjectPosition = finalObjectPosition.normalized * limitMagnitude.y;
 
+            //Rotate The Object if it's too Close
             if (finalObjectPosition.magnitude > limitMagnitude.y + rotationThreshold)
                 grabObjectRigidBody.angularVelocity = randomRotationDirection * angularVelocityWhenNear;
 
