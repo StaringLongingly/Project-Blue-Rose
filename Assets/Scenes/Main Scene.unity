@@ -846,9 +846,10 @@ MonoBehaviour:
   previousHighlightedGrabObject: {fileID: 0}
   foundGrabObject: 0
   massScalar: 2
+  breakOffRadius: 1
   angularVelocityWhenNear: 1
   rotationThreshold: 0.2
-  limitYPosition: {x: -30, y: 30}
+  limitYPosition: {x: 0.7, y: 30}
   limitMagnitude: {x: 0.6, y: 30}
   head: {fileID: 780401847}
   GrabObjectTransformBeforeGrab: {fileID: 0}
@@ -894,7 +895,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.1, y: 0.13, z: 0.2}
   m_Center: {x: -0.03, y: -0.03, z: 0.01}
@@ -2101,9 +2102,10 @@ MonoBehaviour:
   previousHighlightedGrabObject: {fileID: 0}
   foundGrabObject: 0
   massScalar: 2
+  breakOffRadius: 1
   angularVelocityWhenNear: 1
   rotationThreshold: 0.2
-  limitYPosition: {x: -30, y: 30}
+  limitYPosition: {x: 0.7, y: 30}
   limitMagnitude: {x: 0.6, y: 30}
   head: {fileID: 780401847}
   GrabObjectTransformBeforeGrab: {fileID: 0}
@@ -2149,7 +2151,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.1, y: 0.13, z: 0.2}
   m_Center: {x: 0.03, y: -0.03, z: 0.01}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HighlightGameObject : MonoBehaviour
 {
-    public bool isHighlighted, isHighlightedFromLeftHand, isHighlightedFromRightHand;
+    public bool isHighlighted, isHighlightedFromLeftHand, isHighlightedFromRightHand, isHighlightedOverride, isDehighlightedOverride, wasDisabledLastFrame;
     public float highlightState = 0f;
     private float highlightStatePreviousFrame;
     public float highlightRateUp = 0.1f;
@@ -22,8 +22,8 @@ public class HighlightGameObject : MonoBehaviour
 
     void FixedUpdate()
     {
-        isHighlighted = isHighlightedFromLeftHand || isHighlightedFromRightHand;
-        if ((highlightState == 0 && !isHighlighted) || (highlightState == 1 && isHighlighted)) return;
+        isHighlighted = !isDehighlightedOverride && (isHighlightedFromLeftHand || isHighlightedFromRightHand || isHighlightedOverride);
+        if ((highlightState == 0 && !isHighlighted || highlightState == 1 && isHighlighted) && wasDisabledLastFrame) gameObject.GetComponent<HighlightGameObject>().enabled = false;
 
         if (isHighlighted) highlightState += highlightRateUp;
         else highlightState -= highlightRateDown;
@@ -38,5 +38,7 @@ public class HighlightGameObject : MonoBehaviour
         }
 
         highlightStatePreviousFrame = highlightState;
+
+        wasDisabledLastFrame = highlightState == 0 && !isHighlighted || highlightState == 1 && isHighlighted;
     }
 }

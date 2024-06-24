@@ -9,6 +9,7 @@ public class ForceGrabObject : MonoBehaviour
     public GameObject previousHighlightedGrabObject;
     public bool foundGrabObject; 
     public float massScalar = 2f;
+    public float breakOffRadius = 1f;
     public float angularVelocityWhenNear = 1f;
     public float rotationThreshold = 0.2f;
 
@@ -22,6 +23,7 @@ public class ForceGrabObject : MonoBehaviour
     [Header("Grabbed Object Information")]
     public Transform GrabObjectTransformBeforeGrab;
     public GameObject grabObject;
+    private HighlightGameObject highlightScript;
     private Rigidbody grabObjectRigidBody;
     private bool grabObjectRigidBodyGravityBeforeGrab; 
     public float finalObjectPositionDistanceFromHand;
@@ -71,6 +73,14 @@ public class ForceGrabObject : MonoBehaviour
 
     void FixedUpdate()
     {
+        void updateObjectHighlight(bool state)
+        {
+            highlightScript.enabled = true;
+        
+            if (isLeftHand) highlightScript.isHighlightedFromLeftHand = state;
+            else highlightScript.isHighlightedFromRightHand = state; 
+        }
+
         if (handPositionOnPreviousFrame == transform.position && handRotationOnPreviousFrame == transform.rotation && !isGrabbing) return;
 
         Debug.DrawRay(transform.position, transform.forward * maxGrabDistance, Color.red);
@@ -107,8 +117,6 @@ public class ForceGrabObject : MonoBehaviour
                 }
             }
 
-            if (!foundGrabObject && !isGrabbing) return;
-
             if (foundGrabObject)
             {
                 //Debug.Log("Found Grabbable Object");
@@ -116,10 +124,8 @@ public class ForceGrabObject : MonoBehaviour
                 if (!isGrabbing)
                 {
                     Debug.Log("Object Highlighted");
-                    HighlightGameObject highlightScript = hitInfo.collider.gameObject.GetComponent<HighlightGameObject>();
-                    highlightScript.enabled = true;
-                    if (isLeftHand) highlightScript.isHighlightedFromLeftHand = true;
-                    else highlightScript.isHighlightedFromRightHand = true; 
+                    highlightScript = hitInfo.collider.gameObject.GetComponent<HighlightGameObject>();
+                    updateObjectHighlight(true);
 
                     if (previousHighlightedGrabObject == null)
                     {
@@ -131,29 +137,25 @@ public class ForceGrabObject : MonoBehaviour
                     {
                         Debug.Log("Object Dehighlighted");
                         highlightScript = previousHighlightedGrabObject.GetComponent<HighlightGameObject>();
-                        if (isLeftHand) highlightScript.isHighlightedFromLeftHand = false;
-                        else highlightScript.isHighlightedFromRightHand = false; 
+                        updateObjectHighlight(false);
 
                         previousHighlightedGrabObject = hitInfo.collider.gameObject;
                     }
                 }
-                else
-                {
-                    grabObject = hitInfo.collider.gameObject;
-                }
+                else grabObject = hitInfo.collider.gameObject;
             }
-            /* else if (previousHighlightedGrabObject != null)
+            else
             {
-                Debug.Log("Object Dehighlighted");
-                HighlightGameObject highlightScript = previousHighlightedGrabObject.GetComponent<HighlightGameObject>();
-                if (isLeftHand) highlightScript.isHighlightedFromLeftHand = false;
-                else highlightScript.isHighlightedFromRightHand = false; 
+                if (highlightScript != null) updateObjectHighlight(false);
+                if (!isGrabbing) return;
             }
-            */
-
+            
             if (foundGrabObject && isGrabbing)
             {
                 Debug.Log("Object Force Grabbed!");
+                grabObject.GetComponent<HighlightGameObject>().enabled = true;
+                grabObject.GetComponent<HighlightGameObject>().isDehighlightedOverride = true; 
+
                 grabObjectRigidBody = grabObject.GetComponent<Rigidbody>();
                 grabObjectRigidBodyGravityBeforeGrab = grabObjectRigidBody.useGravity;
                 grabObjectRigidBody.useGravity = false;
@@ -163,6 +165,12 @@ public class ForceGrabObject : MonoBehaviour
 
                 grabObject.GetComponent<AudioSource>().enabled = true;
                 grabObject.GetComponent<MakeSoundWhenMoving>().enabled = true;
+
+                Collider[] hitColliders = Physics.OverlapSphere(grabObject.transform.position, breakOffRadius);
+                foreach (var hitCollider in hitColliders)
+                {
+                    hitCollider.isTrigger = false;
+                }
 
                 GrabObjectTransformBeforeGrab = grabObject.transform;
 
@@ -183,6 +191,9 @@ public class ForceGrabObject : MonoBehaviour
         if (!isGrabbing && grabObject != null && grabObjectRigidBody != null)
         {
             Debug.Log("Object Force Dropped!", grabObject);
+            grabObject.GetComponent<HighlightGameObject>().enabled = true;
+            grabObject.GetComponent<HighlightGameObject>().isDehighlightedOverride = false; 
+            
             grabObjectRigidBody.useGravity = grabObjectRigidBodyGravityBeforeGrab;
             grabObject = null;
             grabObjectRigidBody = null;
