@@ -23,9 +23,13 @@ public class MakeSoundWhenMoving : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!audioSource.isActiveAndEnabled) return;
         velocity = rb.velocity.magnitude;
-
-        if (velocity < minVelocity) audioSource.Stop();
+        if (velocity < minVelocity)
+        {
+            audioSource.Stop();
+            return;
+        }
         else if (audioSource.isPlaying == false) audioSource.Play();
 
         if (velocity > maxVelocity) velocity = maxVelocity;

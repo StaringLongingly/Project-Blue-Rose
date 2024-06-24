@@ -1,5 +1,5 @@
-using UnityEditor;
-using UnityEditor.PackageManager;
+using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ForceGrabObject : MonoBehaviour
@@ -27,6 +27,8 @@ public class ForceGrabObject : MonoBehaviour
     public float finalObjectPositionDistanceFromHand;
 
     [Header("Hand Information")]
+    private Vector3 handPositionOnPreviousFrame;
+    private Quaternion handRotationOnPreviousFrame;
     public Transform handTransformBeforeGrab;
     public bool isLeftHand;
     public bool isGrabbing = false; 
@@ -69,6 +71,8 @@ public class ForceGrabObject : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (handPositionOnPreviousFrame == transform.position && handRotationOnPreviousFrame == transform.rotation && !isGrabbing) return;
+
         Debug.DrawRay(transform.position, transform.forward * maxGrabDistance, Color.red);
         if (grabObject == null)
         {
@@ -103,19 +107,33 @@ public class ForceGrabObject : MonoBehaviour
                 }
             }
 
+            if (!foundGrabObject && !isGrabbing) return;
+
             if (foundGrabObject)
             {
-                Debug.Log("Found Grabbable Object");
+                //Debug.Log("Found Grabbable Object");
 
                 if (!isGrabbing)
                 {
                     Debug.Log("Object Highlighted");
                     HighlightGameObject highlightScript = hitInfo.collider.gameObject.GetComponent<HighlightGameObject>();
+                    highlightScript.enabled = true;
                     if (isLeftHand) highlightScript.isHighlightedFromLeftHand = true;
                     else highlightScript.isHighlightedFromRightHand = true; 
 
-                    if (hitInfo.collider.gameObject != previousHighlightedGrabObject)
+                    if (previousHighlightedGrabObject == null)
                     {
+                        Debug.Log("Instantiated Previous Highlighted GrabObject");
+                        previousHighlightedGrabObject = hitInfo.collider.gameObject;
+                    }
+
+                    if (hitInfo.collider.gameObject != previousHighlightedGrabObject && previousHighlightedGrabObject != null)
+                    {
+                        Debug.Log("Object Dehighlighted");
+                        highlightScript = previousHighlightedGrabObject.GetComponent<HighlightGameObject>();
+                        if (isLeftHand) highlightScript.isHighlightedFromLeftHand = false;
+                        else highlightScript.isHighlightedFromRightHand = false; 
+
                         previousHighlightedGrabObject = hitInfo.collider.gameObject;
                     }
                 }
@@ -124,13 +142,14 @@ public class ForceGrabObject : MonoBehaviour
                     grabObject = hitInfo.collider.gameObject;
                 }
             }
-            else if (previousHighlightedGrabObject != null)
+            /* else if (previousHighlightedGrabObject != null)
             {
                 Debug.Log("Object Dehighlighted");
                 HighlightGameObject highlightScript = previousHighlightedGrabObject.GetComponent<HighlightGameObject>();
                 if (isLeftHand) highlightScript.isHighlightedFromLeftHand = false;
                 else highlightScript.isHighlightedFromRightHand = false; 
             }
+            */
 
             if (foundGrabObject && isGrabbing)
             {
@@ -138,6 +157,12 @@ public class ForceGrabObject : MonoBehaviour
                 grabObjectRigidBody = grabObject.GetComponent<Rigidbody>();
                 grabObjectRigidBodyGravityBeforeGrab = grabObjectRigidBody.useGravity;
                 grabObjectRigidBody.useGravity = false;
+                grabObjectRigidBody.constraints = RigidbodyConstraints.None;
+                grabObjectRigidBody.interpolation = RigidbodyInterpolation.Interpolate;
+                grabObjectRigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+                grabObject.GetComponent<AudioSource>().enabled = true;
+                grabObject.GetComponent<MakeSoundWhenMoving>().enabled = true;
 
                 GrabObjectTransformBeforeGrab = grabObject.transform;
 
@@ -211,6 +236,8 @@ public class ForceGrabObject : MonoBehaviour
             //Debug.Log(newVelocity);
             grabObjectRigidBody.velocity = newVelocity / grabObjectRigidBody.mass;
         }
-    }
 
+        handPositionOnPreviousFrame = transform.position;
+        handRotationOnPreviousFrame = transform.rotation;
+    }
 }

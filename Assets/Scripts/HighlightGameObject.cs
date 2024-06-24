@@ -16,11 +16,14 @@ public class HighlightGameObject : MonoBehaviour
     {
         renderer = gameObject.GetComponent<Renderer>();
         propertyBlock = new MaterialPropertyBlock();
+        propertyBlock.SetFloat("_Highlight", isHighlighted ? 1 : 0);
+        renderer.SetPropertyBlock(propertyBlock);
     }
 
     void FixedUpdate()
     {
         isHighlighted = isHighlightedFromLeftHand || isHighlightedFromRightHand;
+        if ((highlightState == 0 && !isHighlighted) || (highlightState == 1 && isHighlighted)) return;
 
         if (isHighlighted) highlightState += highlightRateUp;
         else highlightState -= highlightRateDown;
@@ -29,7 +32,7 @@ public class HighlightGameObject : MonoBehaviour
 
         if (Mathf.Abs(highlightStatePreviousFrame - highlightState) > Mathf.Epsilon)
         {
-            Debug.Log("Updated Highlight", gameObject);
+            //Debug.Log("Updated Highlight", gameObject);
             propertyBlock.SetFloat("_Highlight", Mathf.Sqrt(highlightState));
             renderer.SetPropertyBlock(propertyBlock);
         }
