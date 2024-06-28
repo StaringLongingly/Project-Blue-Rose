@@ -37,7 +37,7 @@ public class UpdateHandModelTransform : MonoBehaviour
         float magnitude = difference.magnitude;
         
         if (magnitude < snapPositionThreshold && 
-            targetController.gameObject.GetComponent<VelocityEstimator>().GetVelocityEstimate().magnitude < velocityThreshold)
+            targetController.gameObject.GetComponentInParent<VelocityEstimator>().GetVelocityEstimate().magnitude < velocityThreshold)
         {
             rb.MovePosition(targetController.position);
             rb.velocity = new Vector3(0, 0, 0);

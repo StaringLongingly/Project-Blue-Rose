@@ -14,11 +14,13 @@ GameObject:
   - component: {fileID: 4730657207757597570}
   - component: {fileID: 4339679735690554974}
   - component: {fileID: 7549420104917016439}
+  - component: {fileID: 4279713930071641144}
+  - component: {fileID: -3404035986720076326}
   - component: {fileID: 5516926062231724500}
   - component: {fileID: 4615439694604571747}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Grabbable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -162,8 +164,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: df4312337ff7e12459174676fd2899aa, type: 2}
-  - {fileID: 2100000, guid: 6cb74a06e210e0f4b83befcf413728de, type: 2}
+  - {fileID: 2100000, guid: ea76efdc70e97154ab5097b6931f4376, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -231,8 +232,33 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &4279713930071641144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5289301869828696532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1138f883a324117478ae627ccb228a80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-3404035986720076326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5289301869828696532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd0ea118a86835f4a8a50d72e18f9c85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  breakOffRadius: 1
 --- !u!114 &5516926062231724500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +294,7 @@ MonoBehaviour:
   isHighlightedFromRightHand: 0
   isHighlightedOverride: 0
   isDehighlightedOverride: 0
+  wasDisabledLastFrame: 0
   highlightState: 0
   highlightRateUp: 0.05
   highlightRateDown: 0.02

@@ -10,14 +10,17 @@ public class HighlightGameObject : MonoBehaviour
     public float highlightRateUp = 0.1f;
     public float highlightRateDown = 0.2f;
     private MaterialPropertyBlock propertyBlock;
-    private Renderer renderer;
+    public Color color;
+    private Renderer objectRenderer;
 
-    void Start()
+    void Awake()
     {
-        renderer = gameObject.GetComponent<Renderer>();
+        objectRenderer = gameObject.GetComponent<Renderer>();
         propertyBlock = new MaterialPropertyBlock();
+        objectRenderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetColor("_Outline_Color", color);
         propertyBlock.SetFloat("_Highlight", isHighlighted ? 1 : 0);
-        renderer.SetPropertyBlock(propertyBlock);
+        objectRenderer.SetPropertyBlock(propertyBlock);
     }
 
     void FixedUpdate()
@@ -33,8 +36,9 @@ public class HighlightGameObject : MonoBehaviour
         if (Mathf.Abs(highlightStatePreviousFrame - highlightState) > Mathf.Epsilon)
         {
             //Debug.Log("Updated Highlight", gameObject);
+            propertyBlock.SetColor("_Outline_Color", color);
             propertyBlock.SetFloat("_Highlight", Mathf.Sqrt(highlightState));
-            renderer.SetPropertyBlock(propertyBlock);
+            objectRenderer.SetPropertyBlock(propertyBlock);
         }
 
         highlightStatePreviousFrame = highlightState;

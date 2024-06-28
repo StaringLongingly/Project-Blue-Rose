@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,7 +8,6 @@ public class ForceGrabObject : MonoBehaviour
     public GameObject previousHighlightedGrabObject;
     public bool foundGrabObject; 
     public float massScalar = 2f;
-    public float breakOffRadius = 1f;
     public float angularVelocityWhenNear = 1f;
     public float rotationThreshold = 0.2f;
 
@@ -47,10 +45,10 @@ public class ForceGrabObject : MonoBehaviour
     public float grabDeltaRadius = 0.5f;
     public float maxGrabRadius = 10f;
 
-    [Header("Offset Parameters (X is Right, Y is Up, Z is Forward)")]
-    public Vector3 offsetPower = new Vector3(1.1f, 1.1f, 1.1f);
-    public Vector3 offsetScalarsBeforeExp = new Vector3(2f, 2f, 2f);
-    public Vector3 offsetScalarsAfterExp = new Vector3(1f, 1f, 1f);
+    [Header("Offset Parameters")]
+    public float offsetPower = 3f;
+    public float offsetScalarsBeforeExp = 45f;
+    public float offsetScalarsAfterExp = 0.02f;
 
     [Header("Position Vectors")]
     public Vector3 randomRotationDirection;
@@ -88,12 +86,11 @@ public class ForceGrabObject : MonoBehaviour
         {
             bool foundGrabObject = false;
             RaycastHit hitInfo = new RaycastHit();
-            int grabbableLayerMask = LayerMask.GetMask("Grabbable");
 
             // Inner Loop for back-to-back Spheres, outer Loop for Bigger Radii
             for (float currentRadius = 1; currentRadius <= maxGrabRadius; currentRadius += grabDeltaRadius)
             {
-                for (float j = 1; j <= maxGrabDistance; j += grabDeltaRadius)
+                for (float j = 0; j <= maxGrabDistance; j += grabDeltaRadius)
                 {
                     Vector3 origin = transform.position + transform.forward * j;
                     foundGrabObject = Physics.SphereCast(
@@ -101,9 +98,8 @@ public class ForceGrabObject : MonoBehaviour
                         currentRadius,
                         transform.forward,
                         out hitInfo,
-                        maxGrabDistance,
-                        grabbableLayerMask
-                    ) && hitInfo.collider.gameObject != otherHandScript.grabObject && hitInfo.collider.gameObject.layer == 3;
+                        maxGrabDistance
+                    ) && hitInfo.collider.gameObject != otherHandScript.grabObject && hitInfo.collider.gameObject.tag == "Grabbable";
 
                     if (foundGrabObject)
                     {
@@ -166,11 +162,7 @@ public class ForceGrabObject : MonoBehaviour
                 grabObject.GetComponent<AudioSource>().enabled = true;
                 grabObject.GetComponent<MakeSoundWhenMoving>().enabled = true;
 
-                Collider[] hitColliders = Physics.OverlapSphere(grabObject.transform.position, breakOffRadius);
-                foreach (var hitCollider in hitColliders)
-                {
-                    hitCollider.isTrigger = false;
-                }
+                grabObject.GetComponent<BreakOff>().BreakOffFromGround();
 
                 GrabObjectTransformBeforeGrab = grabObject.transform;
 
@@ -215,7 +207,7 @@ public class ForceGrabObject : MonoBehaviour
             handPositionComponents.z = Vector3.Dot(transform.position, transform.forward);
 
             //Apply Transformations
-            handDistanceFromHeadDifferenceTransformed = Mathf.Sign(handDistanceFromHeadDifference) * Mathf.Pow(Mathf.Abs(handDistanceFromHeadDifference * offsetScalarsBeforeExp.z), offsetPower.z) * offsetScalarsAfterExp.z;
+            handDistanceFromHeadDifferenceTransformed = Mathf.Sign(handDistanceFromHeadDifference) * Mathf.Pow(Mathf.Abs(handDistanceFromHeadDifference * offsetScalarsBeforeExp), offsetPower) * offsetScalarsAfterExp;
             //Limit the Distance
             finalObjectPositionDistanceFromHand = handDistanceFromHeadDifferenceTransformed + positionDifferenceMagnitude;
             if (finalObjectPositionDistanceFromHand < limitMagnitude.x) handDistanceFromHeadDifferenceTransformed = limitMagnitude.x - positionDifferenceMagnitude; 
