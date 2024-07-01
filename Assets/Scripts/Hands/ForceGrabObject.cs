@@ -90,7 +90,7 @@ public class ForceGrabObject : MonoBehaviour
             // Inner Loop for back-to-back Spheres, outer Loop for Bigger Radii
             for (float currentRadius = 1; currentRadius <= maxGrabRadius; currentRadius += grabDeltaRadius)
             {
-                for (float j = 0; j <= maxGrabDistance; j += grabDeltaRadius)
+                for (float j = -0.5f; j <= maxGrabDistance; j += grabDeltaRadius)
                 {
                     Vector3 origin = transform.position + transform.forward * j;
                     foundGrabObject = Physics.SphereCast(

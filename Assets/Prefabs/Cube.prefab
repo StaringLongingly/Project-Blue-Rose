@@ -18,7 +18,9 @@ GameObject:
   - component: {fileID: -3404035986720076326}
   - component: {fileID: 5516926062231724500}
   - component: {fileID: 4615439694604571747}
-  m_Layer: 6
+  - component: {fileID: 5831548437868124528}
+  - component: {fileID: 5658579473106005397}
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Grabbable
   m_Icon: {fileID: 0}
@@ -298,3 +300,32 @@ MonoBehaviour:
   highlightState: 0
   highlightRateUp: 0.05
   highlightRateDown: 0.02
+  color: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &5831548437868124528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5289301869828696532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372cd960a21310b4da10a0bbc4ebcab8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityThreshold: 10
+--- !u!114 &5658579473106005397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5289301869828696532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920b0fb7d01ffba4db0a8babb96e4d60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleTypes:
+  - {fileID: 8922935621333402814, guid: 0914a73d22147c443814f31167f85e68, type: 3}
+  - {fileID: 8922935621333402814, guid: f0c8dcfc73ef8e84eb6a8c20912a2f1b, type: 3}

@@ -13,7 +13,7 @@ public class HighlightGameObject : MonoBehaviour
     public Color color;
     private Renderer objectRenderer;
 
-    void Awake()
+    void Start()
     {
         objectRenderer = gameObject.GetComponent<Renderer>();
         propertyBlock = new MaterialPropertyBlock();
