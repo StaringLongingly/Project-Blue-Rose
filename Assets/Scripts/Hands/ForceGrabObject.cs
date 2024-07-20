@@ -174,7 +174,7 @@ public class ForceGrabObject : MonoBehaviour
 
                 positionDifferenceMagnitude = (GrabObjectTransformBeforeGrab.position - transform.position).magnitude;
 
-                randomRotationDirection = Random.insideUnitSphere.normalized; 
+                randomRotationDirection = Random.onUnitSphere; 
             }
         }
 
@@ -231,7 +231,7 @@ public class ForceGrabObject : MonoBehaviour
                 finalObjectPosition = finalObjectPosition.normalized * limitMagnitude.y;
 
             //Rotate The Object if it's too Close
-            if (finalObjectPosition.magnitude > limitMagnitude.y + rotationThreshold)
+            if (finalObjectPosition.magnitude < limitMagnitude.y + rotationThreshold)
                 grabObjectRigidBody.angularVelocity = randomRotationDirection * angularVelocityWhenNear;
 
             Vector3 newVelocity = (finalObjectPosition - grabObject.transform.position) * forceScalar;

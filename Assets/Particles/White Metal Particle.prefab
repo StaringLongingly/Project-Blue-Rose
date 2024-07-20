@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: -4499532843111753080}
   - component: {fileID: 4692535498800252074}
   - component: {fileID: 2855208967440012887}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: White Metal Particle
-  m_TagString: Untagged
+  m_TagString: Particle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -261,9 +261,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleSize: 0.015
+  particleSizeVariance: 0
   particleForce: 500
-  rate: 0.5
+  particleForceVariance: 0
   particleNumberInAGroup: 5
   particleNumberInAGroupVariance: 2
   particleGroupCount: 1
   particleGroupCountVariance: 0
+  particleLifetime: 5
+  rate: 0.5

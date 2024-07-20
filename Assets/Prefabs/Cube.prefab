@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 4615439694604571747}
   - component: {fileID: 5831548437868124528}
   - component: {fileID: 5658579473106005397}
+  - component: {fileID: 287929206994866067}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Grabbable
@@ -38,7 +39,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -329,3 +330,20 @@ MonoBehaviour:
   particleTypes:
   - {fileID: 8922935621333402814, guid: 0914a73d22147c443814f31167f85e68, type: 3}
   - {fileID: 8922935621333402814, guid: f0c8dcfc73ef8e84eb6a8c20912a2f1b, type: 3}
+  - {fileID: 8922935621333402814, guid: 4d50efe7ff9ee05499b4f600a4aa4255, type: 3}
+  particleParent: {fileID: 0}
+--- !u!114 &287929206994866067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5289301869828696532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f1fa81defb44e543b14536753955f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CutCascades: 5
+  ExplodeForce: 40
+  MaxDestroyLevel: 5
